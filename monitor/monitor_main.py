@@ -25,7 +25,8 @@ login_manager.login_view = 'login'
 login_manager.session_protection = 'strong'
 logger = monitor_logger.get_logger(__name__)
 
-app.config['ALLOWED_EXTENSIONS'] = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
+app.config['ALLOWED_EXTENSIONS'] = set(
+    ['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
 app.config['UPLOAD_PATH'] = 'upload'
 
 app.config['UPLOADS_DEFAULT_DEST'] = app.config['UPLOAD_PATH']
@@ -64,14 +65,16 @@ def log(*text):
 def user_loader(username):
     user = User()
     user.id = username
-    logger.debug("user_loader user is %s, is_authenticated %s" % (user.id, user.is_authenticated))
+    logger.debug("user_loader user is %s, is_authenticated %s" %
+                 (user.id, user.is_authenticated))
     return user
 
 
 # 使用request_loader的自定义登录, 同时支持url参数和和使用Authorization头部的基础认证的登录：
 @login_manager.request_loader
 def request_loader(req):
-    logger.debug("request_loader url is %s, request args is %s" % (req.url, req.args))
+    logger.debug("request_loader url is %s, request args is %s" %
+                 (req.url, req.args))
     authorization = request.headers.get('Authorization')
     logger.debug("Authorization is %s" % authorization)
     # 模拟api登录
@@ -190,9 +193,11 @@ def get_list():
         for item in pages.items:
             item.__dict__['_sa_instance_state'] = ''
             item.__dict__['create_time'] = "%s" % item.__dict__['create_time']
-            item.__dict__['monitor_time'] = "%s" % item.__dict__['monitor_time']
+            item.__dict__['monitor_time'] = "%s" % item.__dict__[
+                'monitor_time']
             data.append(item.__dict__)
-        result = json.dumps({"code": 0, "msg": "", "count": pages.total, "data": data})
+        result = json.dumps(
+            {"code": 0, "msg": "", "count": pages.total, "data": data})
         return result
 
 
@@ -212,7 +217,8 @@ def flask_upload():
         else:
             try:
                 filename = uploaded_photos.save(file)
-                logger.debug('%s url is %s' % (filename, uploaded_photos.url(filename)))
+                logger.debug('%s url is %s' %
+                             (filename, uploaded_photos.url(filename)))
                 return jsonify({'code': 0, 'filename': filename, 'msg': uploaded_photos.url(filename)})
             except Exception as e:
                 logger.debug('upload file exception: %s' % e)
@@ -229,7 +235,8 @@ def show_photo(filename):
             pass
         else:
             logger.debug('filename is %s' % filename)
-            image_data = open(os.path.join(app.config['UPLOAD_PATH'], 'files/%s' % filename), "rb").read()
+            image_data = open(os.path.join(
+                app.config['UPLOAD_PATH'], 'files/%s' % filename), "rb").read()
             response = make_response(image_data)
             response.headers['Content-Type'] = 'image/png'
             return response
@@ -259,13 +266,16 @@ def upload_file():
                     filename = origin_file_name
 
                     if os.path.exists(app.config['UPLOAD_PATH']):
-                        logger.debug('%s path exist' % app.config['UPLOAD_PATH'])
+                        logger.debug('%s path exist' %
+                                     app.config['UPLOAD_PATH'])
                         pass
                     else:
-                        logger.debug('%s path not exist, do make dir' % app.config['UPLOAD_PATH'])
+                        logger.debug('%s path not exist, do make dir' %
+                                     app.config['UPLOAD_PATH'])
                         os.makedirs(app.config['PLOAD_PATH'])
 
-                    file.save(os.path.join(app.config['UPLOAD_PATH'], filename))
+                    file.save(os.path.join(
+                        app.config['UPLOAD_PATH'], filename))
                     logger.debug('%s save successfully' % filename)
                     return jsonify({'code': 0, 'filename': origin_file_name, 'msg': ''})
                 else:
@@ -280,7 +290,8 @@ def upload_file():
 
 def allowed_file(filename):
     return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
+           filename.rsplit('.', 1)[1].lower(
+           ) in app.config['ALLOWED_EXTENSIONS']
 
 
 @app.route('/delete', methods=['GET'])
@@ -288,7 +299,8 @@ def delete_file():
     if request.method == 'GET':
         filename = request.args.get('filename')
         timestamp = request.args.get('timestamp')
-        logger.debug('delete file : %s, timestamp is %s' % (filename, timestamp))
+        logger.debug('delete file : %s, timestamp is %s' %
+                     (filename, timestamp))
         try:
             fullfile = os.path.join(app.config['UPLOAD_PATH'], filename)
 
@@ -328,7 +340,8 @@ def add_monitor():
 @app.route('/blueprint/<string:name>', methods=['GET'])
 def blueprint(name):
     if name == 'r':
-        logger.debug('"style.css" url is "%s"' % url_for('monitor_resource.static', filename='css/style.css'))
+        logger.debug('"style.css" url is "%s"' % url_for(
+            'monitor_resource.static', filename='css/style.css'))
         return jsonify({'name': 'style.css', 'url': url_for('monitor_resource.static', filename='css/style.css')})
     else:
         pass

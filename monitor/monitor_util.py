@@ -79,13 +79,8 @@ class FlaskMonitor(db.Model):
 
 # SQLAlchemy core
 metadata = MetaData()
-T_Monitor = Table('t_credit_monitor', metadata, Column('id', Integer, primary_key=True)
-                  , Column('credit_type', String(128))
-                  , Column('query_type', String(128))
-                  , Column('credit_status', String(128))
-                  , Column('monitor_time', String(128))
-                  , Column('elapsed_time', String(128))
-                  , Column('create_time', String(128)))
+T_Monitor = Table('t_credit_monitor', metadata, Column('id', Integer, primary_key=True), Column('credit_type', String(128)), Column('query_type', String(
+    128)), Column('credit_status', String(128)), Column('monitor_time', String(128)), Column('elapsed_time', String(128)), Column('create_time', String(128)))
 
 
 # http://docs.sqlalchemy.org/en/latest/
@@ -110,7 +105,8 @@ def get_monitor_with_core():
 # using flask_sqlalchemy
 def get_monitor_flask_sqlalchemy(page=1, limit=10):
     try:
-        logger.debug('get_monitor_flask_sqlalchemy: page is %s, limit is %s' % (page, limit))
+        logger.debug(
+            'get_monitor_flask_sqlalchemy: page is %s, limit is %s' % (page, limit))
         return FlaskMonitor.query.paginate(page, limit)
     except Exception as e:
         logger.debug("Exception in get_monitor_flask_sqlalchemy %s" % e)
@@ -124,10 +120,7 @@ def add_monitor(d):
     d = json.loads(d)
     # Content-Type: application/json
     conn.execute(T_Monitor.insert(), [{
-        'credit_type': d['credit_type']
-        , 'query_type': d['query_type']
-        , 'credit_status': d['credit_status']
-        , 'elapsed_time': int(random.random() * 100)
+        'credit_type': d['credit_type'], 'query_type': d['query_type'], 'credit_status': d['credit_status'], 'elapsed_time': int(random.random() * 100)
     }])
 
     # # Content-Type: application/x-www-form-urlencoded; charset=UTF-8
